@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<!-- служебная часть -->
+
+<head>
+  <!-- заголовок страницы -->
+  <title>Trello Kitty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rampart+One&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- задаём CSS-стили прямо здесь же, чтобы всё было в одном файле -->
+  <style type="text/css">
+    /*Задаём общие параметры для всей страницы: шрифт и отступы*/
+    body {
+        background: #c7b39b url(5.jpg);
+      text-align: center;
+      margin: 10;
+      font-family: 'Permanent Marker', cursive;
+      color: rgb(238, 58, 142);
+      font-size: 16px;
+    }
+
+    /* Внешний вид заголовка первого уровня*/
+    h1 {
+      font-size: 40px;
+      margin-bottom: 50px;
+      font-weight: bold;
+    }
+
+    /* Внешний вид заголовка второго уровня*/
+    h2 {
+      font-size: 21px;
+      
+    }
+
+    /* Настраиваем внешний вид поля ввода*/
+    input {
+      display: inline-block;
+      margin: 20px auto;
+      border: 2px solid #eee;
+      padding: 10px 20px;
+      font-family: Verdana, Arial, sans-serif;
+      font-size: 16px;
+    }
+
+    /*Как будет выглядеть каждый элемент нашего списка*/
+    .tdItem {
+      text-align: left;
+      padding: 10px;
+      cursor: default;
+      border-radius: 7px;
+    }
+
+    /*Что произойдёт, когда мы наведём курсор на любую задачу из списка*/
+    .tdItem:hover {
+      background-color: rgb(245, 153, 184);
+    }
+
+    .btn-rounded {
+    border-radius: 19px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 3px;
+}
+
+
+    /*Закончили со стилями*/
+  </style>
+  <!-- закрываем служебную часть страницы -->
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1>trello kitty</h1>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <iv class="row">
+      <div class="col-12 col-sm-6 col-md-3 col-lg-3 col-xl-3">
+        <h2 class="todo__caption">Задачи</h2>
+        <!-- Поле ввода, куда пишем новые задачи «Важное»-->
+        <div id="tdl1App">
+          <input type="text" class="form-control" placeholder="Новая задача">
+          <!-- Создаём пока ещё пустой список «Сделать» -->
+          <div class="tdl1Div">
+            <ul class="List list-unstyled">
+              <!-- Тут появятся наши задачи, когда мы их добавим -->
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-light"><i class="fa fa-bars"></i> Добавить</button>   
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+  </script>
+  <!-- Пишем скрипт, который будет обрабатывать наши задачи и хранить их на нашем устройстве -->
+  <script>
+    // Заводим переменные под наши задачи
+    var List1 = $('#tdl1App ul');
+    var Mask1 = 'tdl1_';
+
+    // Функция, которая берёт из памяти наши задачи и делает из них список
+    function showTasks1() {
+      // Узнаём размер хранилища
+      var Storage_size = localStorage.length;
+      // Если в хранилище что-то есть…
+      if (Storage_size > 0) {
+        // то берём и добавляем это в задачи  
+        for (var i = 0; i < Storage_size; i++) {
+          var key = localStorage.key(i);
+          // обрабатываем первый список
+          if (key.indexOf(Mask1) == 0) {
+            // и делаем это элементами списка
+            $('<li></li>').addClass('tdItem')
+              .attr('data-itemid', key)
+              .text(localStorage.getItem(key))
+              .appendTo(List1);
+          }
+        }
+      }
+    }
+    
+    // Сразу вызываем эту функцию, вдруг в памяти уже остались задачи с прошлого раза
+    showTasks1();
+    // Следим, когда пользователь напишет новую задачу в первое поле ввода и нажмёт Enter
+    $('#tdl1App input').on('keydown', function (e) {
+      if (e.keyCode != 13) return;
+      var str = e.target.value;
+      e.target.value = "";
+      // Если в поле ввода было что-то написано — начинаем обрабатывать
+      if (str.length > 0) {
+        var number_Id_1 = 0;
+        List1.children().each(function (index, el) {
+          var element_Id_1 = $(el).attr('data-itemid').slice(5);
+          if (element_Id_1 > number_Id_1)
+            number_Id_1 = element_Id_1;
+        })
+        number_Id_1++;
+        // Отправляем новую задачу сразу в память
+        localStorage.setItem(Mask1 + number_Id_1, str);
+        // и добавляем её в конец списка
+        $('<li></li>').addClass('tdItem')
+          .attr('data-itemid', Mask1 + number_Id_1)
+          .text(str).appendTo(List1);
+      }
+    });
+    // По клику на задаче — убираем её из списка
+    $(document).on('click', '.tdItem', function (e) {
+      // Находим задачу, по которой кликнули
+      var jet = $(e.target);
+      // Убираем её из памяти
+      localStorage.removeItem(jet.attr('data-itemid'));
+      // и убираем её из списка
+      jet.remove();
+    })
+  // Закончился основной скрипт
+  </script>
+</body>
+<!-- конец всей страницы -->
+
+</html>
